@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: credit-application-service-test
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+app:
+  jwt:
+    secret: testSecretKeyForJWTThatIsAtLeast256BitsLongForHS256Algorithm
+    expiration-ms: 3600000
+  risk-service:
+    url: http://localhost:8081
+
+logging:
+  level:
+    com.coopcredit: DEBUG
