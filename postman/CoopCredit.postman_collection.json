@@ -64,8 +64,13 @@
                         },
                         "url": {
                             "raw": "{{base_url}}/auth/login",
-                            "host": ["{{base_url}}"],
-                            "path": ["auth", "login"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
                         }
                     }
                 },
@@ -99,8 +104,13 @@
                         },
                         "url": {
                             "raw": "{{base_url}}/auth/login",
-                            "host": ["{{base_url}}"],
-                            "path": ["auth", "login"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
                         }
                     }
                 },
@@ -134,8 +144,13 @@
                         },
                         "url": {
                             "raw": "{{base_url}}/auth/login",
-                            "host": ["{{base_url}}"],
-                            "path": ["auth", "login"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
                         }
                     }
                 },
@@ -171,8 +186,13 @@
                         },
                         "url": {
                             "raw": "{{base_url}}/auth/register",
-                            "host": ["{{base_url}}"],
-                            "path": ["auth", "register"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "register"
+                            ]
                         }
                     }
                 },
@@ -208,8 +228,13 @@
                         },
                         "url": {
                             "raw": "{{base_url}}/auth/register",
-                            "host": ["{{base_url}}"],
-                            "path": ["auth", "register"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "register"
+                            ]
                         }
                     }
                 }
@@ -246,8 +271,12 @@
                         ],
                         "url": {
                             "raw": "{{base_url}}/affiliates",
-                            "host": ["{{base_url}}"],
-                            "path": ["affiliates"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "affiliates"
+                            ]
                         }
                     }
                 },
@@ -278,8 +307,13 @@
                         ],
                         "url": {
                             "raw": "{{base_url}}/affiliates/{{affiliate_document}}",
-                            "host": ["{{base_url}}"],
-                            "path": ["affiliates", "{{affiliate_document}}"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "affiliates",
+                                "{{affiliate_document}}"
+                            ]
                         }
                     }
                 },
@@ -315,8 +349,12 @@
                         },
                         "url": {
                             "raw": "{{base_url}}/affiliates",
-                            "host": ["{{base_url}}"],
-                            "path": ["affiliates"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "affiliates"
+                            ]
                         }
                     }
                 },
@@ -352,8 +390,13 @@
                         },
                         "url": {
                             "raw": "{{base_url}}/affiliates/{{affiliate_document}}",
-                            "host": ["{{base_url}}"],
-                            "path": ["affiliates", "{{affiliate_document}}"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "affiliates",
+                                "{{affiliate_document}}"
+                            ]
                         }
                     }
                 },
@@ -381,8 +424,13 @@
                         ],
                         "url": {
                             "raw": "{{base_url}}/affiliates/1112223334",
-                            "host": ["{{base_url}}"],
-                            "path": ["affiliates", "1112223334"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "affiliates",
+                                "1112223334"
+                            ]
                         }
                     }
                 }
@@ -428,8 +476,12 @@
                         },
                         "url": {
                             "raw": "{{base_url}}/applications",
-                            "host": ["{{base_url}}"],
-                            "path": ["applications"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "applications"
+                            ]
                         }
                     }
                 },
@@ -460,8 +512,12 @@
                         ],
                         "url": {
                             "raw": "{{base_url}}/applications",
-                            "host": ["{{base_url}}"],
-                            "path": ["applications"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "applications"
+                            ]
                         }
                     }
                 },
@@ -495,8 +551,13 @@
                         ],
                         "url": {
                             "raw": "{{base_url}}/applications/pending",
-                            "host": ["{{base_url}}"],
-                            "path": ["applications", "pending"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "applications",
+                                "pending"
+                            ]
                         }
                     }
                 },
@@ -529,8 +590,13 @@
                         ],
                         "url": {
                             "raw": "{{base_url}}/applications/{{application_id}}",
-                            "host": ["{{base_url}}"],
-                            "path": ["applications", "{{application_id}}"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "applications",
+                                "{{application_id}}"
+                            ]
                         }
                     }
                 },
@@ -561,8 +627,14 @@
                         ],
                         "url": {
                             "raw": "{{base_url}}/applications/affiliate/{{affiliate_document}}",
-                            "host": ["{{base_url}}"],
-                            "path": ["applications", "affiliate", "{{affiliate_document}}"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "applications",
+                                "affiliate",
+                                "{{affiliate_document}}"
+                            ]
                         }
                     }
                 }
@@ -606,8 +678,14 @@
                         ],
                         "url": {
                             "raw": "{{base_url}}/applications/{{application_id}}/evaluate-risk",
-                            "host": ["{{base_url}}"],
-                            "path": ["applications", "{{application_id}}", "evaluate-risk"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "applications",
+                                "{{application_id}}",
+                                "evaluate-risk"
+                            ]
                         }
                     }
                 },
@@ -647,8 +725,14 @@
                         },
                         "url": {
                             "raw": "{{base_url}}/applications/{{application_id}}/decide",
-                            "host": ["{{base_url}}"],
-                            "path": ["applications", "{{application_id}}", "decide"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "applications",
+                                "{{application_id}}",
+                                "decide"
+                            ]
                         }
                     }
                 },
@@ -688,8 +772,14 @@
                         },
                         "url": {
                             "raw": "{{base_url}}/applications/{{application_id}}/decide",
-                            "host": ["{{base_url}}"],
-                            "path": ["applications", "{{application_id}}", "decide"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "applications",
+                                "{{application_id}}",
+                                "decide"
+                            ]
                         }
                     }
                 }
@@ -717,8 +807,12 @@
                         "method": "GET",
                         "url": {
                             "raw": "{{risk_central_url}}/health",
-                            "host": ["{{risk_central_url}}"],
-                            "path": ["health"]
+                            "host": [
+                                "{{risk_central_url}}"
+                            ],
+                            "path": [
+                                "health"
+                            ]
                         }
                     }
                 },
@@ -754,8 +848,12 @@
                         },
                         "url": {
                             "raw": "{{risk_central_url}}/risk-evaluation",
-                            "host": ["{{risk_central_url}}"],
-                            "path": ["risk-evaluation"]
+                            "host": [
+                                "{{risk_central_url}}"
+                            ],
+                            "path": [
+                                "risk-evaluation"
+                            ]
                         }
                     }
                 }
@@ -786,9 +884,14 @@
                     "request": {
                         "method": "GET",
                         "url": {
-                            "raw": "http://localhost:8080/actuator/health",
-                            "host": ["http://localhost:8080"],
-                            "path": ["actuator", "health"]
+                            "raw": "http://localhost:8080/api/actuator/health",
+                            "host": [
+                                "http://localhost:8080"
+                            ],
+                            "path": [
+                                "api/actuator",
+                                "health"
+                            ]
                         }
                     }
                 },
@@ -797,9 +900,14 @@
                     "request": {
                         "method": "GET",
                         "url": {
-                            "raw": "http://localhost:8080/actuator/info",
-                            "host": ["http://localhost:8080"],
-                            "path": ["actuator", "info"]
+                            "raw": "http://localhost:8080/api/actuator/info",
+                            "host": [
+                                "http://localhost:8080"
+                            ],
+                            "path": [
+                                "api/actuator",
+                                "info"
+                            ]
                         }
                     }
                 },
@@ -808,9 +916,14 @@
                     "request": {
                         "method": "GET",
                         "url": {
-                            "raw": "http://localhost:8080/actuator/metrics",
-                            "host": ["http://localhost:8080"],
-                            "path": ["actuator", "metrics"]
+                            "raw": "http://localhost:8080/api/actuator/metrics",
+                            "host": [
+                                "http://localhost:8080"
+                            ],
+                            "path": [
+                                "api/actuator",
+                                "metrics"
+                            ]
                         }
                     }
                 }
@@ -838,15 +951,25 @@
                     ],
                     "request": {
                         "method": "POST",
-                        "header": [{"key": "Content-Type", "value": "application/json"}],
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
                         "body": {
                             "mode": "raw",
                             "raw": "{\"username\": \"admin\", \"password\": \"password\"}"
                         },
                         "url": {
                             "raw": "{{base_url}}/auth/login",
-                            "host": ["{{base_url}}"],
-                            "path": ["auth", "login"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "auth",
+                                "login"
+                            ]
                         }
                     }
                 },
@@ -869,8 +992,14 @@
                     "request": {
                         "method": "POST",
                         "header": [
-                            {"key": "Content-Type", "value": "application/json"},
-                            {"key": "Authorization", "value": "Bearer {{token}}"}
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
                         ],
                         "body": {
                             "mode": "raw",
@@ -878,8 +1007,12 @@
                         },
                         "url": {
                             "raw": "{{base_url}}/applications",
-                            "host": ["{{base_url}}"],
-                            "path": ["applications"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "applications"
+                            ]
                         }
                     }
                 },
@@ -903,11 +1036,22 @@
                     ],
                     "request": {
                         "method": "POST",
-                        "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
                         "url": {
                             "raw": "{{base_url}}/applications/{{application_id}}/evaluate-risk",
-                            "host": ["{{base_url}}"],
-                            "path": ["applications", "{{application_id}}", "evaluate-risk"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "applications",
+                                "{{application_id}}",
+                                "evaluate-risk"
+                            ]
                         }
                     }
                 },
@@ -932,8 +1076,14 @@
                     "request": {
                         "method": "POST",
                         "header": [
-                            {"key": "Authorization", "value": "Bearer {{token}}"},
-                            {"key": "Content-Type", "value": "application/json"}
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
                         ],
                         "body": {
                             "mode": "raw",
@@ -941,8 +1091,14 @@
                         },
                         "url": {
                             "raw": "{{base_url}}/applications/{{application_id}}/decide",
-                            "host": ["{{base_url}}"],
-                            "path": ["applications", "{{application_id}}", "decide"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "applications",
+                                "{{application_id}}",
+                                "decide"
+                            ]
                         }
                     }
                 },
@@ -966,11 +1122,21 @@
                     ],
                     "request": {
                         "method": "GET",
-                        "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
                         "url": {
                             "raw": "{{base_url}}/applications/{{application_id}}",
-                            "host": ["{{base_url}}"],
-                            "path": ["applications", "{{application_id}}"]
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "applications",
+                                "{{application_id}}"
+                            ]
                         }
                     }
                 }

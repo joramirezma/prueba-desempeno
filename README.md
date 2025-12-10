@@ -944,10 +944,6 @@ The risk service evaluates credit score based on:
 
 ## 👨‍💻 Author
 
-Project developed as part of the Spring Boot performance exam.
-
----
-
-## 📄 License
-
-This project is for educational purposes.
+**Johan Ramirez Marin**  
+**ID:** 102362486  
+**Clan:** Berners Lee
