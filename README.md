@@ -468,7 +468,7 @@ Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
 - ✅ **Troubleshooting** section
 
 #### Interactive API Documentation:
-- ✅ **Swagger UI** at `/swagger-ui.html`
+- ✅ **Swagger UI** at `/api/swagger-ui.html`
 - ✅ **OpenAPI 3.0** specification
 - ✅ **Try it out** functionality
 - ✅ **Schema definitions**
@@ -656,7 +656,7 @@ npm run dev
 | Service | URL | Description |
 |---------|-----|-------------|
 | **Frontend** | [http://localhost:3000](http://localhost:3000) | Web Application (Vite dev server) |
-| **Backend API** | [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html) | Interactive API Documentation |
+| **Backend API** | [http://localhost:8080/api/swagger-ui.html](http://localhost:8080/api/swagger-ui.html) | Interactive API Documentation |
 | **Database** | `localhost:5432` | PostgreSQL (user: coopcredit, pass: coopcredit123) |
 | **Risk API** | [http://localhost:8081](http://localhost:8081) | Mock Risk Evaluation Service |
 
@@ -741,7 +741,7 @@ curl -X POST http://localhost:8080/auth/login \
 
 ### Swagger UI
 
-Interactive documentation available at: `http://localhost:8080/swagger-ui.html`
+Interactive documentation available at: `http://localhost:8080/api/swagger-ui.html`
 
 ---
 
