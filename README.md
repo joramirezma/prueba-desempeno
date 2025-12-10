@@ -549,7 +549,7 @@ graph TB
 ```mermaid
 graph LR
     subgraph "Docker Compose Network"
-        CLIENT[("Client<br/>(Postman/Browser)")]
+        CLIENT[("Client - Postman/Browser")]
         
         subgraph "credit-application-service :8080"
             API["REST API"]
@@ -561,7 +561,7 @@ graph LR
             RISK["Risk Evaluation<br/>Endpoint"]
         end
         
-        DB[(("PostgreSQL<br/>:5432"))]
+        DB[(("PostgreSQL :5432"))]
     end
     
     CLIENT -->|HTTP| API
