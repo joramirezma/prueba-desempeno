@@ -84,8 +84,8 @@ public class CreditApplicationService implements CreditApplicationUseCase {
     }
 
     @Override
-    public CreditApplication evaluate(Long applicationId) {
-        log.info("Evaluating credit application: {}", applicationId);
+    public CreditApplication evaluateRisk(Long applicationId) {
+        log.info("Evaluating risk for credit application: {}", applicationId);
 
         // Find application with affiliate data
         CreditApplication application = applicationRepository.findByIdWithAffiliate(applicationId)
@@ -97,66 +97,104 @@ public class CreditApplicationService implements CreditApplicationUseCase {
         }
 
         Affiliate affiliate = application.getAffiliate();
-        List<String> rejectionReasons = new ArrayList<>();
-        boolean approved = true;
+        List<String> warnings = new ArrayList<>();
 
-        // Rule 1: Check minimum affiliation time
+        // Calculate metrics (but don't auto-reject)
+        
+        // Check 1: Minimum affiliation time
         if (!affiliate.hasMinimumAffiliationTime(MINIMUM_AFFILIATION_MONTHS)) {
-            approved = false;
-            rejectionReasons.add("Insufficient affiliation time. Required: " + MINIMUM_AFFILIATION_MONTHS + " months");
+            warnings.add("Insufficient affiliation time. Required: " + MINIMUM_AFFILIATION_MONTHS + " months");
         }
 
-        // Rule 2: Check maximum credit amount based on salary
+        // Check 2: Maximum credit amount based on salary
         BigDecimal maxCreditAmount = affiliate.getMaximumCreditAmount();
         if (application.getRequestedAmount().compareTo(maxCreditAmount) > 0) {
-            approved = false;
-            rejectionReasons.add("Requested amount exceeds maximum allowed: " + maxCreditAmount);
+            warnings.add("Requested amount exceeds maximum allowed: " + maxCreditAmount);
         }
 
-        // Rule 3: Check debt-to-income ratio
+        // Check 3: Debt-to-income ratio
         BigDecimal debtToIncomeRatio = application.calculateDebtToIncomeRatio(affiliate.getSalary());
         if (debtToIncomeRatio.compareTo(MAX_DEBT_TO_INCOME_RATIO) > 0) {
-            approved = false;
-            rejectionReasons.add("Debt-to-income ratio too high: " + debtToIncomeRatio + "% (max: "
+            warnings.add("Debt-to-income ratio too high: " + debtToIncomeRatio + "% (max: "
                     + MAX_DEBT_TO_INCOME_RATIO + "%)");
         }
 
-        // Rule 4: Call external risk central service
+        // Check 4: Call external risk central service
         RiskCentralPort.RiskEvaluationResponse riskResponse = riskCentralPort.evaluate(
                 affiliate.getDocumentNumber(),
                 application.getRequestedAmount(),
                 application.getTermMonths());
 
-        // Rule 5: Check risk level from external service
+        // Check 5: Add warning for high risk
         if (riskResponse.riskLevel() == RiskLevel.HIGH) {
-            approved = false;
-            rejectionReasons.add("High risk level from credit bureau: score " + riskResponse.score());
+            warnings.add("High risk level from credit bureau: score " + riskResponse.score());
         }
 
-        // Create risk evaluation
+        // Create risk evaluation (as information, not decision)
         RiskEvaluation riskEvaluation = new RiskEvaluation();
         riskEvaluation.setScore(riskResponse.score());
         riskEvaluation.setRiskLevel(riskResponse.riskLevel());
         riskEvaluation.setDebtToIncomeRatio(debtToIncomeRatio);
         riskEvaluation.setDetails(riskResponse.details());
-        riskEvaluation.setApproved(approved);
         riskEvaluation.setEvaluationDate(LocalDateTime.now());
-
-        if (approved) {
-            riskEvaluation.setReason("All evaluation criteria met successfully");
-            application.approve();
-            metricsService.incrementApplicationsApproved();
-            log.info("Credit application {} APPROVED", applicationId);
+        
+        // Set warnings as reason (for analyst to review)
+        if (!warnings.isEmpty()) {
+            riskEvaluation.setReason(String.join("; ", warnings));
         } else {
-            String reason = String.join("; ", rejectionReasons);
-            riskEvaluation.setReason(reason);
-            application.reject();
-            metricsService.incrementApplicationsRejected();
-            log.info("Credit application {} REJECTED. Reasons: {}", applicationId, reason);
+            riskEvaluation.setReason("All evaluation criteria met successfully");
         }
+        
+        // Don't set approved/rejected yet - that's for the analyst
+        riskEvaluation.setApproved(null);
 
         // Associate evaluation with application
         application.setRiskEvaluation(riskEvaluation);
+
+        // Save and return (still PENDING)
+        CreditApplication saved = applicationRepository.save(application);
+        log.info("Risk evaluation completed for application: {}", applicationId);
+        return saved;
+    }
+
+    @Override
+    public CreditApplication makeDecision(Long applicationId, boolean approved, String comments) {
+        log.info("Making decision for credit application {}: {}", applicationId, approved ? "APPROVED" : "REJECTED");
+
+        // Find application with affiliate data
+        CreditApplication application = applicationRepository.findByIdWithAffiliate(applicationId)
+                .orElseThrow(() -> new CreditApplicationNotFoundException(applicationId));
+
+        // Validate application is pending
+        if (!application.isPending()) {
+            throw new CreditEvaluationException("Application has already been evaluated");
+        }
+
+        // Validate risk evaluation exists
+        if (application.getRiskEvaluation() == null) {
+            throw new CreditEvaluationException("Risk evaluation must be performed before making a decision");
+        }
+
+        // Update risk evaluation with analyst decision
+        RiskEvaluation riskEvaluation = application.getRiskEvaluation();
+        riskEvaluation.setApproved(approved);
+        
+        // Add analyst comments to existing reason
+        if (comments != null && !comments.trim().isEmpty()) {
+            String existingReason = riskEvaluation.getReason();
+            riskEvaluation.setReason(existingReason + " | Analyst comments: " + comments);
+        }
+
+        // Update application status
+        if (approved) {
+            application.approve();
+            metricsService.incrementApplicationsApproved();
+            log.info("Credit application {} APPROVED by analyst", applicationId);
+        } else {
+            application.reject();
+            metricsService.incrementApplicationsRejected();
+            log.info("Credit application {} REJECTED by analyst", applicationId);
+        }
 
         // Save and return
         return applicationRepository.save(application);

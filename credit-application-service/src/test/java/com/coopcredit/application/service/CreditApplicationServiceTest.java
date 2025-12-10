@@ -133,8 +133,8 @@ class CreditApplicationServiceTest {
         }
 
         @Test
-        @DisplayName("Should approve application when all criteria met")
-        void shouldApproveApplicationWhenAllCriteriaMet() {
+        @DisplayName("Should evaluate risk and approve application when analyst decides")
+        void shouldApproveApplicationWhenAnalystDecides() {
                 // Given
                 when(applicationRepository.findByIdWithAffiliate(1L))
                                 .thenReturn(Optional.of(pendingApplication));
@@ -145,18 +145,25 @@ class CreditApplicationServiceTest {
                 when(applicationRepository.save(any(CreditApplication.class)))
                                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-                // When
-                CreditApplication result = creditApplicationService.evaluate(1L);
+                // When - Step 1: Evaluate risk
+                CreditApplication evaluated = creditApplicationService.evaluateRisk(1L);
+
+                // Then - Still pending after risk evaluation
+                assertThat(evaluated.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+                assertThat(evaluated.getRiskEvaluation()).isNotNull();
+                assertThat(evaluated.getRiskEvaluation().getApproved()).isNull();
+
+                // When - Step 2: Analyst approves
+                CreditApplication result = creditApplicationService.makeDecision(1L, true, "Approved by analyst");
 
                 // Then
                 assertThat(result.getStatus()).isEqualTo(ApplicationStatus.APPROVED);
-                assertThat(result.getRiskEvaluation()).isNotNull();
                 assertThat(result.getRiskEvaluation().getApproved()).isTrue();
         }
 
         @Test
-        @DisplayName("Should reject application when risk level is HIGH")
-        void shouldRejectApplicationWhenRiskLevelIsHigh() {
+        @DisplayName("Should evaluate risk and reject application when analyst decides")
+        void shouldRejectApplicationWhenAnalystDecides() {
                 // Given
                 when(applicationRepository.findByIdWithAffiliate(1L))
                                 .thenReturn(Optional.of(pendingApplication));
@@ -167,8 +174,16 @@ class CreditApplicationServiceTest {
                 when(applicationRepository.save(any(CreditApplication.class)))
                                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-                // When
-                CreditApplication result = creditApplicationService.evaluate(1L);
+                // When - Step 1: Evaluate risk
+                CreditApplication evaluated = creditApplicationService.evaluateRisk(1L);
+
+                // Then - Still pending with high risk warning
+                assertThat(evaluated.getStatus()).isEqualTo(ApplicationStatus.PENDING);
+                assertThat(evaluated.getRiskEvaluation()).isNotNull();
+                assertThat(evaluated.getRiskEvaluation().getRiskLevel()).isEqualTo(RiskLevel.HIGH);
+
+                // When - Step 2: Analyst rejects based on risk
+                CreditApplication result = creditApplicationService.makeDecision(1L, false, "Rejected due to high risk");
 
                 // Then
                 assertThat(result.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
@@ -176,8 +191,8 @@ class CreditApplicationServiceTest {
         }
 
         @Test
-        @DisplayName("Should reject application when amount exceeds maximum")
-        void shouldRejectApplicationWhenAmountExceedsMaximum() {
+        @DisplayName("Should show warning when amount exceeds maximum but not auto-reject")
+        void shouldShowWarningWhenAmountExceedsMaximum() {
                 // Given
                 pendingApplication.setRequestedAmount(new BigDecimal("100000000")); // Way over 12x salary
                 when(applicationRepository.findByIdWithAffiliate(1L))
@@ -189,17 +204,18 @@ class CreditApplicationServiceTest {
                 when(applicationRepository.save(any(CreditApplication.class)))
                                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-                // When
-                CreditApplication result = creditApplicationService.evaluate(1L);
+                // When - Evaluate risk (should NOT auto-reject)
+                CreditApplication result = creditApplicationService.evaluateRisk(1L);
 
-                // Then
-                assertThat(result.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
+                // Then - Still pending but with warning
+                assertThat(result.getStatus()).isEqualTo(ApplicationStatus.PENDING);
                 assertThat(result.getRiskEvaluation().getReason()).contains("maximum allowed");
+                assertThat(result.getRiskEvaluation().getApproved()).isNull(); // Not decided yet
         }
 
         @Test
-        @DisplayName("Should reject application when insufficient affiliation time")
-        void shouldRejectApplicationWhenInsufficientAffiliationTime() {
+        @DisplayName("Should show warning when insufficient affiliation time but not auto-reject")
+        void shouldShowWarningWhenInsufficientAffiliationTime() {
                 // Given - affiliate with only 3 months
                 activeAffiliate.setAffiliationDate(LocalDate.now().minusMonths(3));
                 when(applicationRepository.findByIdWithAffiliate(1L))
@@ -211,11 +227,12 @@ class CreditApplicationServiceTest {
                 when(applicationRepository.save(any(CreditApplication.class)))
                                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-                // When
-                CreditApplication result = creditApplicationService.evaluate(1L);
+                // When - Evaluate risk (should NOT auto-reject)
+                CreditApplication result = creditApplicationService.evaluateRisk(1L);
 
-                // Then
-                assertThat(result.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
+                // Then - Still pending but with warning
+                assertThat(result.getStatus()).isEqualTo(ApplicationStatus.PENDING);
                 assertThat(result.getRiskEvaluation().getReason()).contains("affiliation time");
+                assertThat(result.getRiskEvaluation().getApproved()).isNull(); // Not decided yet
         }
 }

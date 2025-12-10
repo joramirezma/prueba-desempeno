@@ -69,7 +69,9 @@ class IntegrationTest {
                                 "testuser",
                                 "password123",
                                 "testuser@email.com",
-                                null,
+                                "12345678",
+                                "Test User",
+                                new BigDecimal("3000000"),
                                 null);
 
                 mockMvc.perform(post("/auth/register")
@@ -88,7 +90,9 @@ class IntegrationTest {
                                 "logintest",
                                 "password123",
                                 "logintest@email.com",
-                                null,
+                                "12345679",
+                                "Login Test User",
+                                new BigDecimal("3000000"),
                                 null);
                 mockMvc.perform(post("/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -120,6 +124,8 @@ class IntegrationTest {
                                 "adminuser",
                                 "admin123",
                                 "adminuser@email.com",
+                                null,
+                                null,
                                 null,
                                 java.util.Set.of(com.coopcredit.domain.model.enums.Role.ROLE_ADMIN));
 
@@ -153,6 +159,8 @@ class IntegrationTest {
                                 "validationadmin",
                                 "admin123",
                                 "validationadmin@email.com",
+                                null,
+                                null,
                                 null,
                                 java.util.Set.of(com.coopcredit.domain.model.enums.Role.ROLE_ADMIN));
 

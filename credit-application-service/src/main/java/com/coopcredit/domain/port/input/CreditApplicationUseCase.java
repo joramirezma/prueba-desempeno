@@ -25,13 +25,23 @@ public interface CreditApplicationUseCase {
             Integer termMonths, BigDecimal proposedRate);
 
     /**
-     * Evaluate a pending credit application.
-     * This triggers the full evaluation process including risk assessment.
+     * Evaluate risk for a pending credit application (automatic).
+     * This calculates metrics and consults external risk service.
      * 
      * @param applicationId the ID of the application to evaluate
-     * @return the evaluated credit application with risk evaluation
+     * @return the application with risk evaluation data
      */
-    CreditApplication evaluate(Long applicationId);
+    CreditApplication evaluateRisk(Long applicationId);
+
+    /**
+     * Manually approve or reject an application (analyst decision).
+     * 
+     * @param applicationId the ID of the application
+     * @param approved true to approve, false to reject
+     * @param comments analyst comments
+     * @return the updated application
+     */
+    CreditApplication makeDecision(Long applicationId, boolean approved, String comments);
 
     /**
      * Find a credit application by ID.

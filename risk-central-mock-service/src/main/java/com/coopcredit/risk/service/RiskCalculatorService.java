@@ -23,21 +23,22 @@ public class RiskCalculatorService {
 
     /**
      * Evaluate credit risk based on document number.
-     * The algorithm ensures:
+     * Implementation as per requirements:
      * - Same document always returns the same score
      * - Different documents return different scores
+     * - Uses hash-based seed for deterministic results
      */
     public RiskEvaluationResponse evaluate(RiskEvaluationRequest request) {
         log.info("Evaluating risk for document: {}", request.documentNumber());
 
-        // Generate deterministic seed from document number
+        // Generate deterministic seed from document number (hash mod 1000)
         int seed = Math.abs(request.documentNumber().hashCode() % 1000);
 
-        // Calculate score between 300 and 950
+        // Calculate score between 300 and 950 based on seed
         int scoreRange = MAX_SCORE - MIN_SCORE;
         int score = MIN_SCORE + (seed * scoreRange / 1000);
 
-        // Determine risk level
+        // Classify risk level
         String riskLevel;
         String details;
 

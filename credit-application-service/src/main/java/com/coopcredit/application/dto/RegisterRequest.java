@@ -2,6 +2,7 @@ package com.coopcredit.application.dto;
 
 import com.coopcredit.domain.model.enums.Role;
 import jakarta.validation.constraints.*;
+import java.math.BigDecimal;
 import java.util.Set;
 
 /**
@@ -15,6 +16,10 @@ public record RegisterRequest(
         @NotBlank(message = "Email is required") @Email(message = "Invalid email format") String email,
 
         @Size(max = 20, message = "Document number must be at most 20 characters") String documentNumber,
+
+        @Size(max = 100, message = "Name must be at most 100 characters") String name,
+
+        @DecimalMin(value = "0.01", message = "Salary must be greater than 0") BigDecimal salary,
 
         Set<Role> roles) {
 }

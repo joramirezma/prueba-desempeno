@@ -22,7 +22,7 @@ import java.util.List;
  * REST Controller for affiliate management endpoints.
  */
 @RestController
-@RequestMapping("/api/affiliates")
+@RequestMapping("/affiliates")
 @Tag(name = "Affiliates", description = "Affiliate management endpoints")
 @SecurityRequirement(name = "bearerAuth")
 public class AffiliateController {

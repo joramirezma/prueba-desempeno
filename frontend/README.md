@@ -1,73 +1,137 @@
-# React + TypeScript + Vite
+# CoopCredit Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend para el Sistema de Solicitudes de Crédito de CoopCredit, desarrollado con React, TypeScript y TailwindCSS.
 
-Currently, two official plugins are available:
+## 🚀 Tecnologías
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 18** - Biblioteca UI
+- **TypeScript** - Tipado estático
+- **Vite** - Build tool y dev server
+- **TailwindCSS** - Framework de estilos
+- **React Router** - Enrutamiento SPA
+- **React Query** - Gestión de estado del servidor
+- **React Hook Form** - Manejo de formularios
+- **Axios** - Cliente HTTP
 
-## React Compiler
+## 📋 Requisitos
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js 18+ 
+- npm o yarn
+- Backend `credit-application-service` corriendo en puerto 8080
 
-## Expanding the ESLint configuration
+## 🛠️ Instalación
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Instalar dependencias
+npm install
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# Iniciar en modo desarrollo
+npm run dev
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Construir para producción
+npm run build
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Vista previa de producción
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🌐 Configuración
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+El frontend usa un proxy en desarrollo para redirigir las peticiones `/api/*` al backend en `localhost:8080`.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Para producción, configura la variable de entorno:
 ```
+VITE_API_URL=http://tu-backend:8080/api
+```
+
+## 👥 Usuarios de Prueba
+
+| Usuario | Contraseña | Rol |
+|---------|------------|-----|
+| `admin` | `admin123` | ADMIN |
+| `analyst` | `analyst123` | ANALYST |
+| `affiliate1` | `affiliate123` | AFFILIATE |
+
+## 📱 Funcionalidades por Rol
+
+### ADMIN
+- ✅ Dashboard completo
+- ✅ Gestión de afiliados (CRUD)
+- ✅ Ver todas las solicitudes
+- ✅ Evaluar solicitudes pendientes
+- ✅ Crear solicitudes para afiliados
+
+### ANALYST
+- ✅ Dashboard con accesos rápidos
+- ✅ Ver lista de afiliados
+- ✅ Ver solicitudes pendientes
+- ✅ Evaluar solicitudes
+
+### AFFILIATE
+- ✅ Dashboard personalizado
+- ✅ Crear nuevas solicitudes de crédito
+- ✅ Ver mis solicitudes y su estado
+
+## 🐳 Docker
+
+```bash
+# Construir imagen
+docker build -t coopcredit-frontend .
+
+# Ejecutar contenedor
+docker run -p 3000:80 coopcredit-frontend
+```
+
+## 📁 Estructura del Proyecto
+
+```
+frontend/
+├── src/
+│   ├── components/     # Componentes reutilizables
+│   │   ├── ui/         # Componentes de UI (Button, Input, etc.)
+│   │   ├── layout/     # Layout y Navbar
+│   │   └── auth/       # ProtectedRoute
+│   ├── context/        # Contextos de React (AuthContext)
+│   ├── pages/          # Páginas de la aplicación
+│   │   ├── auth/       # Login y Register
+│   │   ├── dashboard/  # Dashboard principal
+│   │   ├── affiliates/ # Gestión de afiliados
+│   │   └── applications/ # Gestión de solicitudes
+│   ├── services/       # Servicios de API
+│   ├── types/          # Tipos TypeScript
+│   ├── App.tsx         # Componente raíz con rutas
+│   ├── main.tsx        # Punto de entrada
+│   └── index.css       # Estilos globales
+├── public/             # Archivos estáticos
+├── Dockerfile          # Configuración Docker
+├── nginx.conf          # Configuración Nginx para producción
+└── package.json        # Dependencias y scripts
+```
+
+## 🔗 Endpoints del Backend
+
+El frontend consume los siguientes endpoints:
+
+### Autenticación
+- `POST /api/auth/login` - Iniciar sesión
+- `POST /api/auth/register` - Registrar usuario
+
+### Afiliados
+- `GET /api/affiliates` - Listar afiliados
+- `GET /api/affiliates/{doc}` - Obtener afiliado
+- `POST /api/affiliates` - Crear afiliado
+- `PUT /api/affiliates/{doc}` - Actualizar afiliado
+- `POST /api/affiliates/{doc}/activate` - Activar
+- `POST /api/affiliates/{doc}/deactivate` - Desactivar
+
+### Solicitudes
+- `GET /api/applications` - Listar todas (ADMIN)
+- `GET /api/applications/pending` - Listar pendientes
+- `GET /api/applications/{id}` - Obtener por ID
+- `GET /api/applications/affiliate/{doc}` - Por afiliado
+- `POST /api/applications` - Crear solicitud
+- `POST /api/applications/{id}/evaluate` - Evaluar
+
+## 📝 Licencia
+
+MIT

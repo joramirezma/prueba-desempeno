@@ -24,7 +24,7 @@ import java.util.List;
  * REST Controller for credit application management endpoints.
  */
 @RestController
-@RequestMapping("/api/applications")
+@RequestMapping("/applications")
 @Tag(name = "Credit Applications", description = "Credit application management endpoints")
 @SecurityRequirement(name = "bearerAuth")
 public class CreditApplicationController {
@@ -128,14 +128,26 @@ public class CreditApplicationController {
         return ResponseEntity.ok(applications);
     }
 
-    @PostMapping("/{id}/evaluate")
+    @PostMapping("/{id}/evaluate-risk")
     @PreAuthorize("hasAnyRole('ANALYST', 'ADMIN')")
-    @Operation(summary = "Evaluate application", description = "Evaluates a pending credit application (Analyst/Admin)")
-    public ResponseEntity<CreditApplicationResponse> evaluate(@PathVariable Long id) {
-        log.info("Evaluating credit application: {}", id);
+    @Operation(summary = "Evaluate risk", description = "Performs automatic risk evaluation (Analyst/Admin)")
+    public ResponseEntity<CreditApplicationResponse> evaluateRisk(@PathVariable Long id) {
+        log.info("Evaluating risk for credit application: {}", id);
 
-        CreditApplication evaluated = creditApplicationUseCase.evaluate(id);
+        CreditApplication evaluated = creditApplicationUseCase.evaluateRisk(id);
         return ResponseEntity.ok(toResponse(evaluated));
+    }
+
+    @PostMapping("/{id}/decide")
+    @PreAuthorize("hasAnyRole('ANALYST', 'ADMIN')")
+    @Operation(summary = "Make decision", description = "Approve or reject application manually (Analyst/Admin)")
+    public ResponseEntity<CreditApplicationResponse> makeDecision(
+            @PathVariable Long id,
+            @RequestBody @Valid EvaluationDecisionRequest request) {
+        log.info("Making decision for credit application {}: {}", id, request.approved() ? "APPROVED" : "REJECTED");
+
+        CreditApplication decided = creditApplicationUseCase.makeDecision(id, request.approved(), request.comments());
+        return ResponseEntity.ok(toResponse(decided));
     }
 
     private CreditApplicationResponse toResponse(CreditApplication application) {

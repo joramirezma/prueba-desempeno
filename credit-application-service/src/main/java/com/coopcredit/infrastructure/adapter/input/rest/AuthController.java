@@ -1,8 +1,11 @@
 package com.coopcredit.infrastructure.adapter.input.rest;
 
 import com.coopcredit.application.dto.*;
+import com.coopcredit.domain.model.Affiliate;
 import com.coopcredit.domain.model.User;
+import com.coopcredit.domain.model.enums.AffiliateStatus;
 import com.coopcredit.domain.model.enums.Role;
+import com.coopcredit.domain.port.input.AffiliateUseCase;
 import com.coopcredit.domain.port.input.AuthUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,9 +31,11 @@ public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final AuthUseCase authUseCase;
+    private final AffiliateUseCase affiliateUseCase;
 
-    public AuthController(AuthUseCase authUseCase) {
+    public AuthController(AuthUseCase authUseCase, AffiliateUseCase affiliateUseCase) {
         this.authUseCase = authUseCase;
+        this.affiliateUseCase = affiliateUseCase;
     }
 
     @PostMapping("/register")
@@ -52,6 +58,19 @@ public class AuthController {
         user.setRoles(roles);
 
         User registeredUser = authUseCase.register(user);
+
+        // If user is an AFFILIATE, create the affiliate record with salary
+        if (roles.contains(Role.ROLE_AFFILIATE) && request.documentNumber() != null && request.salary() != null) {
+            Affiliate affiliate = new Affiliate();
+            affiliate.setDocumentNumber(request.documentNumber());
+            affiliate.setName(request.name() != null ? request.name() : request.username());
+            affiliate.setSalary(request.salary());
+            affiliate.setAffiliationDate(LocalDate.now());
+            affiliate.setStatus(AffiliateStatus.ACTIVE);
+            
+            affiliateUseCase.register(affiliate);
+            log.info("Affiliate record created for user: {}", request.username());
+        }
 
         // Generate token for the new user
         String token = authUseCase.login(request.username(), request.password());

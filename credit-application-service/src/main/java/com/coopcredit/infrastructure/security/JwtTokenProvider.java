@@ -41,13 +41,23 @@ public class JwtTokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        return Jwts.builder()
+        String documentNumber = null;
+        if (authentication.getPrincipal() instanceof CustomUserDetails) {
+            documentNumber = ((CustomUserDetails) authentication.getPrincipal()).getDocumentNumber();
+        }
+
+        JwtBuilder builder = Jwts.builder()
                 .subject(username)
                 .claim("roles", roles)
                 .issuedAt(now)
                 .expiration(expiryDate)
-                .signWith(key)
-                .compact();
+                .signWith(key);
+
+        if (documentNumber != null) {
+            builder.claim("document", documentNumber);
+        }
+
+        return builder.compact();
     }
 
     public String getUsernameFromToken(String token) {
