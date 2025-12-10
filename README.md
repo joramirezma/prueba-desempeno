@@ -508,106 +508,33 @@ Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
 
 ### Hexagonal Architecture (Ports & Adapters)
 
-```mermaid
-graph TB
-    subgraph "Infrastructure Layer"
-        REST["REST Controllers<br/>(Input Adapters)"]
-        JPA["JPA Repositories<br/>(Output Adapters)"]
-        RISK_ADAPTER["Risk Central Adapter<br/>(Output Adapter)"]
-        SEC["Security Filters<br/>(JWT)"]
-    end
-    
-    subgraph "Application Layer"
-        UC_AFF["AffiliateService"]
-        UC_CREDIT["CreditApplicationService"]
-        UC_AUTH["AuthService"]
-    end
-    
-    subgraph "Domain Layer"
-        MODELS["Domain Models<br/>Affiliate, CreditApplication,<br/>RiskEvaluation, User"]
-        PORTS_IN["Input Ports<br/>AffiliateUseCase,<br/>CreditApplicationUseCase,<br/>AuthUseCase"]
-        PORTS_OUT["Output Ports<br/>AffiliateRepositoryPort,<br/>CreditApplicationRepositoryPort,<br/>RiskCentralPort"]
-    end
-    
-    REST --> UC_AFF
-    REST --> UC_CREDIT
-    REST --> UC_AUTH
-    
-    UC_AFF --> MODELS
-    UC_CREDIT --> MODELS
-    UC_AUTH --> MODELS
-    
-    UC_AFF --> PORTS_OUT
-    UC_CREDIT --> PORTS_OUT
-    
-    JPA -.-> PORTS_OUT
-    RISK_ADAPTER -.-> PORTS_OUT
-```
+![Hexagonal Architecture](imgs/hexagonal.png)
+
+**Layer Description:**
+- **Domain Layer** (Core) - Pure business logic, zero framework dependencies
+- **Application Layer** - Use case implementations and business orchestration
+- **Infrastructure Layer** - Frameworks, databases, external services, and adapters
+
 
 ### Microservices Architecture
 
-```mermaid
-graph LR
-    subgraph "Docker Compose Network"
-        CLIENT[("Client - Postman/Browser")]
-        
-        subgraph "credit-application-service :8080"
-            API["REST API"]
-            SEC2["JWT Security"]
-            BUS["Business Logic"]
-        end
-        
-        subgraph "risk-central-mock :8081"
-            RISK["Risk Evaluation<br/>Endpoint"]
-        end
-        
-        DB[(("PostgreSQL :5432"))]
-    end
-    
-    CLIENT -->|HTTP| API
-    API --> SEC2
-    SEC2 --> BUS
-    BUS -->|REST| RISK
-    BUS -->|JDBC| DB
-```
+![Microservices Architecture](imgs/microservice.png)
+
+**Services:**
+- **credit-application-service** (Port 8080) - Main service with hexagonal architecture, JWT security, and business logic
+- **risk-central-mock** (Port 8081) - Mock external risk evaluation service with consistent scoring
+- **PostgreSQL** (Port 5432) - Relational database with Flyway migrations
+
 
 ### Use Case Diagram
 
-```mermaid
-graph TB
-    subgraph "Actors"
-        ADMIN(("🔑 Admin"))
-        ANALYST(("📊 Analyst"))
-        AFFILIATE(("👤 Affiliate"))
-    end
-    
-    subgraph "Use Cases"
-        UC1["Register Affiliate"]
-        UC2["Manage Affiliates"]
-        UC3["View All Applications"]
-        UC4["View Pending Applications"]
-        UC5["Evaluate Application"]
-        UC6["Create Credit Application"]
-        UC7["View Own Applications"]
-        UC8["User Registration"]
-        UC9["User Login"]
-    end
-    
-    ADMIN --> UC1
-    ADMIN --> UC2
-    ADMIN --> UC3
-    
-    ANALYST --> UC4
-    ANALYST --> UC5
-    
-    AFFILIATE --> UC6
-    AFFILIATE --> UC7
-    
-    ADMIN --> UC8
-    ADMIN --> UC9
-    ANALYST --> UC9
-    AFFILIATE --> UC9
-```
+![Use Case Diagram](imgs/use-case.png)
+
+**Actors & Permissions:**
+- **Admin** 🔑 - Full system access: manage affiliates, view all applications, evaluate and make decisions
+- **Analyst** 📊 - Credit evaluation: view pending applications, perform risk evaluation, make approval/rejection decisions  
+- **Affiliate** 👤 - Self-service: create credit applications, view own application status
+
 
 ---
 

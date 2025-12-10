@@ -1,49 +1,36 @@
 {
     "info": {
         "name": "CoopCredit API",
-        "description": "Credit Application Management System",
+        "description": "Credit Application Management System - Complete API Testing Collection",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "variable": [
         {
             "key": "base_url",
-            "value": "http://localhost:8080"
+            "value": "http://localhost:8080/api"
+        },
+        {
+            "key": "risk_central_url",
+            "value": "http://localhost:8081"
         },
         {
             "key": "token",
             "value": ""
+        },
+        {
+            "key": "application_id",
+            "value": "1"
+        },
+        {
+            "key": "affiliate_document",
+            "value": "1017654321"
         }
     ],
     "item": [
         {
             "name": "Authentication",
+            "description": "Endpoints de autenticación y registro de usuarios",
             "item": [
-                {
-                    "name": "Register User",
-                    "request": {
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"username\": \"newuser\",\n  \"password\": \"password123\",\n  \"email\": \"newuser@email.com\",\n  \"documentNumber\": null,\n  \"roles\": [\"ROLE_AFFILIATE\"]\n}"
-                        },
-                        "url": {
-                            "raw": "{{base_url}}/auth/register",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "auth",
-                                "register"
-                            ]
-                        }
-                    }
-                },
                 {
                     "name": "Login Admin",
                     "event": [
@@ -52,7 +39,13 @@
                             "script": {
                                 "exec": [
                                     "var jsonData = pm.response.json();",
-                                    "pm.collectionVariables.set(\"token\", jsonData.token);"
+                                    "pm.collectionVariables.set(\"token\", jsonData.token);",
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Token is present\", function () {",
+                                    "    pm.expect(jsonData.token).to.not.be.undefined;",
+                                    "});"
                                 ]
                             }
                         }
@@ -71,13 +64,8 @@
                         },
                         "url": {
                             "raw": "{{base_url}}/auth/login",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "auth",
-                                "login"
-                            ]
+                            "host": ["{{base_url}}"],
+                            "path": ["auth", "login"]
                         }
                     }
                 },
@@ -89,7 +77,10 @@
                             "script": {
                                 "exec": [
                                     "var jsonData = pm.response.json();",
-                                    "pm.collectionVariables.set(\"token\", jsonData.token);"
+                                    "pm.collectionVariables.set(\"token\", jsonData.token);",
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
                                 ]
                             }
                         }
@@ -108,13 +99,117 @@
                         },
                         "url": {
                             "raw": "{{base_url}}/auth/login",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "auth",
-                                "login"
-                            ]
+                            "host": ["{{base_url}}"],
+                            "path": ["auth", "login"]
+                        }
+                    }
+                },
+                {
+                    "name": "Login Affiliate (affiliate1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "pm.collectionVariables.set(\"token\", jsonData.token);",
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"affiliate1\",\n  \"password\": \"password\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["auth", "login"]
+                        }
+                    }
+                },
+                {
+                    "name": "Register New Affiliate",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "if(pm.response.code === 200) {",
+                                    "    pm.collectionVariables.set(\"token\", jsonData.token);",
+                                    "}",
+                                    "pm.test(\"Status code is 200 or 400 (if exists)\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 400]);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"newaffiliate\",\n  \"password\": \"password123\",\n  \"email\": \"newaffiliate@email.com\",\n  \"name\": \"Juan Pérez Nuevo\",\n  \"documentNumber\": \"9876543210\",\n  \"salary\": 4500000,\n  \"roles\": [\"ROLE_AFFILIATE\"]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/register",
+                            "host": ["{{base_url}}"],
+                            "path": ["auth", "register"]
+                        }
+                    }
+                },
+                {
+                    "name": "Register New Analyst",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "if(pm.response.code === 200) {",
+                                    "    pm.collectionVariables.set(\"token\", jsonData.token);",
+                                    "}",
+                                    "pm.test(\"Status code is 200 or 400 (if exists)\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 400]);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"newanalyst\",\n  \"password\": \"password123\",\n  \"email\": \"newanalyst@email.com\",\n  \"name\": \"Ana García\",\n  \"documentNumber\": \"5555555555\",\n  \"roles\": [\"ROLE_ANALYST\"]\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/register",
+                            "host": ["{{base_url}}"],
+                            "path": ["auth", "register"]
                         }
                     }
                 }
@@ -122,9 +217,86 @@
         },
         {
             "name": "Affiliates",
+            "description": "CRUD de afiliados - Requiere rol ADMIN o ANALYST",
             "item": [
                 {
+                    "name": "Get All Affiliates",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Response is an array\", function () {",
+                                    "    pm.expect(pm.response.json()).to.be.an('array');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/affiliates",
+                            "host": ["{{base_url}}"],
+                            "path": ["affiliates"]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Affiliate by Document",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Has document number\", function () {",
+                                    "    pm.expect(pm.response.json().documentNumber).to.not.be.undefined;",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/affiliates/{{affiliate_document}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["affiliates", "{{affiliate_document}}"]
+                        }
+                    }
+                },
+                {
                     "name": "Create Affiliate",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 201 or 400 (if exists)\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "POST",
                         "header": [
@@ -139,67 +311,29 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"documentNumber\": \"1017654399\",\n  \"name\": \"Test User\",\n  \"salary\": 6000000,\n  \"affiliationDate\": \"2023-06-15\"\n}"
+                            "raw": "{\n  \"documentNumber\": \"1112223334\",\n  \"name\": \"Nuevo Afiliado Test\",\n  \"salary\": 6000000,\n  \"affiliationDate\": \"2024-01-15\"\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/affiliates",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "affiliates"
-                            ]
-                        }
-                    }
-                },
-                {
-                    "name": "Get All Affiliates",
-                    "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/api/affiliates",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "affiliates"
-                            ]
-                        }
-                    }
-                },
-                {
-                    "name": "Get Affiliate by Document",
-                    "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{token}}"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{base_url}}/api/affiliates/1017654321",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "affiliates",
-                                "1017654321"
-                            ]
+                            "raw": "{{base_url}}/affiliates",
+                            "host": ["{{base_url}}"],
+                            "path": ["affiliates"]
                         }
                     }
                 },
                 {
                     "name": "Update Affiliate",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "PUT",
                         "header": [
@@ -214,18 +348,41 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"name\": \"Updated Name\",\n  \"salary\": 7000000\n}"
+                            "raw": "{\n  \"name\": \"Nombre Actualizado\",\n  \"salary\": 7500000\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/affiliates/1017654321",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "affiliates",
-                                "1017654321"
-                            ]
+                            "raw": "{{base_url}}/affiliates/{{affiliate_document}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["affiliates", "{{affiliate_document}}"]
+                        }
+                    }
+                },
+                {
+                    "name": "Deactivate Affiliate",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200 or 204\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/affiliates/1112223334",
+                            "host": ["{{base_url}}"],
+                            "path": ["affiliates", "1112223334"]
                         }
                     }
                 }
@@ -233,9 +390,26 @@
         },
         {
             "name": "Credit Applications",
+            "description": "Gestión de solicitudes de crédito",
             "item": [
                 {
                     "name": "Create Credit Application",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 201\", function () {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});",
+                                    "var jsonData = pm.response.json();",
+                                    "if(jsonData.id) {",
+                                    "    pm.collectionVariables.set(\"application_id\", jsonData.id);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "POST",
                         "header": [
@@ -250,22 +424,32 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"affiliateDocumentNumber\": \"1017654321\",\n  \"requestedAmount\": 15000000,\n  \"termMonths\": 24,\n  \"proposedRate\": 12.5\n}"
+                            "raw": "{\n  \"affiliateDocumentNumber\": \"{{affiliate_document}}\",\n  \"requestedAmount\": 15000000,\n  \"termMonths\": 24,\n  \"proposedRate\": 1.5\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/applications",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "applications"
-                            ]
+                            "raw": "{{base_url}}/applications",
+                            "host": ["{{base_url}}"],
+                            "path": ["applications"]
                         }
                     }
                 },
                 {
                     "name": "Get All Applications",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Response is an array\", function () {",
+                                    "    pm.expect(pm.response.json()).to.be.an('array');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "GET",
                         "header": [
@@ -275,19 +459,32 @@
                             }
                         ],
                         "url": {
-                            "raw": "{{base_url}}/api/applications",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "applications"
-                            ]
+                            "raw": "{{base_url}}/applications",
+                            "host": ["{{base_url}}"],
+                            "path": ["applications"]
                         }
                     }
                 },
                 {
                     "name": "Get Pending Applications",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"All applications are PENDING\", function () {",
+                                    "    var apps = pm.response.json();",
+                                    "    apps.forEach(function(app) {",
+                                    "        pm.expect(app.status).to.equal('PENDING');",
+                                    "    });",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "GET",
                         "header": [
@@ -297,20 +494,31 @@
                             }
                         ],
                         "url": {
-                            "raw": "{{base_url}}/api/applications/pending",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "applications",
-                                "pending"
-                            ]
+                            "raw": "{{base_url}}/applications/pending",
+                            "host": ["{{base_url}}"],
+                            "path": ["applications", "pending"]
                         }
                     }
                 },
                 {
                     "name": "Get Application by ID",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Has required fields\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.id).to.not.be.undefined;",
+                                    "    pm.expect(jsonData.status).to.not.be.undefined;",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "GET",
                         "header": [
@@ -320,20 +528,74 @@
                             }
                         ],
                         "url": {
-                            "raw": "{{base_url}}/api/applications/1",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "applications",
-                                "1"
-                            ]
+                            "raw": "{{base_url}}/applications/{{application_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["applications", "{{application_id}}"]
                         }
                     }
                 },
                 {
-                    "name": "Evaluate Application",
+                    "name": "Get Applications by Affiliate",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Response is an array\", function () {",
+                                    "    pm.expect(pm.response.json()).to.be.an('array');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/applications/affiliate/{{affiliate_document}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["applications", "affiliate", "{{affiliate_document}}"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Credit Evaluation (2-Step Process)",
+            "description": "Proceso de evaluación en dos pasos: 1) Evaluar riesgo automáticamente, 2) Decisión manual del analista",
+            "item": [
+                {
+                    "name": "Step 1: Evaluate Risk (Automatic)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Has risk evaluation data\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.riskLevel).to.not.be.undefined;",
+                                    "    pm.expect(jsonData.debtRatio).to.not.be.undefined;",
+                                    "    pm.expect(jsonData.paymentCapacity).to.not.be.undefined;",
+                                    "});",
+                                    "pm.test(\"Status is still PENDING\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.status).to.equal('PENDING');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "POST",
                         "header": [
@@ -343,50 +605,141 @@
                             }
                         ],
                         "url": {
-                            "raw": "{{base_url}}/api/applications/1/evaluate",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "applications",
-                                "1",
-                                "evaluate"
-                            ]
+                            "raw": "{{base_url}}/applications/{{application_id}}/evaluate-risk",
+                            "host": ["{{base_url}}"],
+                            "path": ["applications", "{{application_id}}", "evaluate-risk"]
                         }
                     }
                 },
                 {
-                    "name": "Get Applications by Affiliate",
+                    "name": "Step 2a: Approve Application (Manual)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Status is APPROVED\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.status).to.equal('APPROVED');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
-                        "method": "GET",
+                        "method": "POST",
                         "header": [
                             {
                                 "key": "Authorization",
                                 "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
                             }
                         ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"approved\": true\n}"
+                        },
                         "url": {
-                            "raw": "{{base_url}}/api/applications/affiliate/1017654321",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "api",
-                                "applications",
-                                "affiliate",
-                                "1017654321"
-                            ]
+                            "raw": "{{base_url}}/applications/{{application_id}}/decide",
+                            "host": ["{{base_url}}"],
+                            "path": ["applications", "{{application_id}}", "decide"]
+                        }
+                    }
+                },
+                {
+                    "name": "Step 2b: Reject Application (Manual)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Status is REJECTED\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.status).to.equal('REJECTED');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"approved\": false\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/applications/{{application_id}}/decide",
+                            "host": ["{{base_url}}"],
+                            "path": ["applications", "{{application_id}}", "decide"]
                         }
                     }
                 }
             ]
         },
         {
-            "name": "Risk Central (Mock)",
+            "name": "Risk Central (Mock Service)",
+            "description": "Servicio mock de central de riesgos - puerto 8081",
             "item": [
                 {
-                    "name": "Evaluate Risk",
+                    "name": "Health Check",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{risk_central_url}}/health",
+                            "host": ["{{risk_central_url}}"],
+                            "path": ["health"]
+                        }
+                    }
+                },
+                {
+                    "name": "Evaluate Risk (Direct)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Has risk level\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.riskLevel).to.be.oneOf(['LOW', 'MEDIUM', 'HIGH']);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "POST",
                         "header": [
@@ -397,52 +750,45 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"documentNumber\": \"1017654321\",\n  \"amount\": 15000000,\n  \"termMonths\": 24\n}"
+                            "raw": "{\n  \"documentNumber\": \"{{affiliate_document}}\",\n  \"amount\": 15000000,\n  \"termMonths\": 24\n}"
                         },
                         "url": {
-                            "raw": "http://localhost:8081/risk-evaluation",
-                            "host": [
-                                "http://localhost:8081"
-                            ],
-                            "path": [
-                                "risk-evaluation"
-                            ]
-                        }
-                    }
-                },
-                {
-                    "name": "Health Check",
-                    "request": {
-                        "method": "GET",
-                        "url": {
-                            "raw": "http://localhost:8081/health",
-                            "host": [
-                                "http://localhost:8081"
-                            ],
-                            "path": [
-                                "health"
-                            ]
+                            "raw": "{{risk_central_url}}/risk-evaluation",
+                            "host": ["{{risk_central_url}}"],
+                            "path": ["risk-evaluation"]
                         }
                     }
                 }
             ]
         },
         {
-            "name": "Actuator",
+            "name": "Actuator (Health & Metrics)",
+            "description": "Endpoints de monitoreo del servicio",
             "item": [
                 {
                     "name": "Health",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Status is UP\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.status).to.equal('UP');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "GET",
                         "url": {
-                            "raw": "{{base_url}}/actuator/health",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "actuator",
-                                "health"
-                            ]
+                            "raw": "http://localhost:8080/actuator/health",
+                            "host": ["http://localhost:8080"],
+                            "path": ["actuator", "health"]
                         }
                     }
                 },
@@ -451,14 +797,9 @@
                     "request": {
                         "method": "GET",
                         "url": {
-                            "raw": "{{base_url}}/actuator/info",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "actuator",
-                                "info"
-                            ]
+                            "raw": "http://localhost:8080/actuator/info",
+                            "host": ["http://localhost:8080"],
+                            "path": ["actuator", "info"]
                         }
                     }
                 },
@@ -467,14 +808,169 @@
                     "request": {
                         "method": "GET",
                         "url": {
-                            "raw": "{{base_url}}/actuator/metrics",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "actuator",
-                                "metrics"
-                            ]
+                            "raw": "http://localhost:8080/actuator/metrics",
+                            "host": ["http://localhost:8080"],
+                            "path": ["actuator", "metrics"]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Complete Flow Tests",
+            "description": "Flujos completos de prueba end-to-end",
+            "item": [
+                {
+                    "name": "1. Login as Admin",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "pm.collectionVariables.set(\"token\", jsonData.token);",
+                                    "pm.test(\"Admin logged in\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [{"key": "Content-Type", "value": "application/json"}],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"username\": \"admin\", \"password\": \"password\"}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/auth/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["auth", "login"]
+                        }
+                    }
+                },
+                {
+                    "name": "2. Create Application for Existing Affiliate",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "pm.collectionVariables.set(\"application_id\", jsonData.id);",
+                                    "pm.test(\"Application created\", function () {",
+                                    "    pm.response.to.have.status(201);",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {"key": "Content-Type", "value": "application/json"},
+                            {"key": "Authorization", "value": "Bearer {{token}}"}
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"affiliateDocumentNumber\": \"1017654321\",\n  \"requestedAmount\": 20000000,\n  \"termMonths\": 36,\n  \"proposedRate\": 1.2\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/applications",
+                            "host": ["{{base_url}}"],
+                            "path": ["applications"]
+                        }
+                    }
+                },
+                {
+                    "name": "3. Evaluate Risk for Application",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Risk evaluated\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Has risk data\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.riskLevel).to.not.be.undefined;",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+                        "url": {
+                            "raw": "{{base_url}}/applications/{{application_id}}/evaluate-risk",
+                            "host": ["{{base_url}}"],
+                            "path": ["applications", "{{application_id}}", "evaluate-risk"]
+                        }
+                    }
+                },
+                {
+                    "name": "4. Approve Application",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Application approved\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Status is APPROVED\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.status).to.equal('APPROVED');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {"key": "Authorization", "value": "Bearer {{token}}"},
+                            {"key": "Content-Type", "value": "application/json"}
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"approved\": true}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/applications/{{application_id}}/decide",
+                            "host": ["{{base_url}}"],
+                            "path": ["applications", "{{application_id}}", "decide"]
+                        }
+                    }
+                },
+                {
+                    "name": "5. Verify Application Status",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Application found\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "pm.test(\"Status is APPROVED\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.status).to.equal('APPROVED');",
+                                    "});"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+                        "url": {
+                            "raw": "{{base_url}}/applications/{{application_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": ["applications", "{{application_id}}"]
                         }
                     }
                 }
